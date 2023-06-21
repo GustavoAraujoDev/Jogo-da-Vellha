@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Jogo da Velha</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    table {
+      margin: 0 auto;
+      border-collapse: collapse;
+    }
+
+    td {
+      width: 100px;
+      height: 100px;
+      border: 2px solid #333;
+      font-size: 50px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .x {
+      color: blue;
+    }
+
+    .o {
+      color: red;
+    }
+
+    #mensagem {
+      margin-top: 20px;
+      font-size: 25px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Jogo da Velha</h1>
+  <table id="tabuleiro">
+    <tr>
+      <td id="c1"></td>
+      <td id="c2"></td>
+      <td id="c3"></td>
+    </tr>
+    <tr>
+      <td id="c4"></td>
+      <td id="c5"></td>
+      <td id="c6"></td>
+    </tr>
+    <tr>
+      <td id="c7"></td>
+      <td id="c8"></td>
+      <td id="c9"></td>
+    </tr>
+  </table>
+  <p id="mensagem">Vez do X</p>
+  <script>
+    // Seleciona os elementos da página
+    var tabuleiro = document.getElementById("tabuleiro");
+    var mensagem = document.getElementById("mensagem");
+
+    // Define as variáveis do jogo
+    var vez = "X"; // guarda a vez do jogador
+    var fim = false; // indica se o jogo terminou
+    var celulas = ["", "", "", "", "", "", "", "", ""]; // guarda o conteúdo de cada célula
+
+    // Define as combinações vencedoras
+    var vitorias = [
+      [0, 1, 2], // primeira linha
+      [3, 4, 5], // segunda linha
+      [6, 7, 8], // terceira linha
+      [0, 3, 6], // primeira coluna
+      [1, 4, 7], // segunda coluna
+      [2, 5, 8], // terceira coluna
+      [0, 4, 8], // diagonal principal
+      [2, 4, 6] // diagonal secundária
+    ];
+
+    // Cria uma função para marcar uma célula
+    function marcarCelula(evento) {
+      // Obtém a célula clicada
+      var celula = evento.target;
+
+      // Verifica se a célula está vazia e se o jogo não acabou
+      if (celula.textContent == "" && !fim) {
+        // Coloca o símbolo da vez na célula
+        celula.textContent = vez;
+        celula.classList.add(vez.toLowerCase());
+
+        // Obtém o índice da célula no tabuleiro
+        var indice = celula.id.substring(1) - 1;
+
+        // Atualiza o conteúdo da célula na variável
+        celulas[indice] = vez;
+
+        // Verifica se houve vitória ou empate
+        verificarResultado();
+        
+        // Alterna a vez do jogador
+        trocarVez();
+      }
+    }
+
+    // Cria uma função para verificar o resultado do jogo
+    function verificarResultado() {
+      // Percorre as combinações vencedoras
+      for (var i = 0; i < vitorias.length; i++) {
+        // Obtém uma combinação
+        var vitoria = vitorias[i];
+
+        // Obtém os índices da combinação
+        var a = vitoria[0];
+        var b = vitoria[1];
+        var c = vitoria[2];
+
+        // Verifica se as células da combinação têm o mesmo conteúdo
+        if (celulas[a] == celulas[b] && celulas[b] == celulas[c] && celulas[a] != "") {
+          // Declara o vencedor e termina o jogo
+          mensagem.textContent = "O " + vez + " venceu!";
+          fim = true;
+          return;
+        }
+      }
+
+      // Verifica se todas as células estão preenchidas
+      if (celulas.indexOf("") == -1) {
+        // Declara o empate e termina o jogo
+        mensagem.textContent = "Deu velha!";
+        fim = true;
+        return;
+      }
+    }
+
+    // Cria uma função para trocar a vez do jogador
+    function trocarVez() {
+      // Verifica se o jogo não acabou
+      if (!fim) {
+        // Alterna a vez entre X e O
+        if (vez == "X") {
+          vez = "O";
+        } else {
+          vez = "X";
+        }
+
+        // Exibe a mensagem da vez
+        mensagem.textContent = "Vez do " + vez;
+      }
+    }
+
+    // Adiciona um evento de clique em cada célula do tabuleiro
+    tabuleiro.addEventListener("click", marcarCelula);
+  </script>
+</body>
+</html>
